@@ -1,0 +1,17 @@
+{
+    "name": "Haojohnny\/tp5-curd",
+    "description": "Package description here.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Johnny",
+            "email": "mail@yhcloud.cc"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Haojohnny\\Tp5Curd\\": "src"
+        }
+    }
+}
