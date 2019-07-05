@@ -11,7 +11,23 @@ $ composer require haojohnny/tp5-curd -vvv
 
 ## Usage
 
-TODO
+在Thinkphp5框架的command.php文件中，加入工具命令
+```php
+<?php
+
+    return [
+        'Haojohnny\Tp5Curd\Command\Curd',
+        'Haojohnny\Tp5Curd\Command\Model',
+        'Haojohnny\Tp5Curd\Command\Validate',
+        'Haojohnny\Tp5Curd\Command\Controller',
+    ];
+```
+
+在应用根目录下执行
+    
+    php think
+
+将列出该工具的命令用法。
 
 ## Contributing
 
