@@ -34,6 +34,14 @@ class Validate extends Make
         $namespace = trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
         $class = str_replace($namespace . '\\', '', $name);
 
+        if ($this->input->getArgument('tableName')) {
+            $tableName = $this->input->getArgument('tableName');
+        } else {
+            $tableName = config('database.prefix').strtolower($class);
+        }
+
+        $columnsInfo = $this->getColumnsInfo($tableName);
+
         $search = [
             '{%namespace%}',
             '{%createTime%}',
@@ -43,14 +51,6 @@ class Validate extends Make
             '{%scene%}'
         ];
 
-        if ($this->input->getArgument('tableName')) {
-            $tableName = $this->input->getArgument('tableName');
-        } else {
-            $tableName = config('database.prefix').strtolower($class);
-        }
-
-        $columnsInfo = $this->getColumnsInfo($tableName);
-       
         $replace = [
             $namespace,
             date('Y-m-d H:i'),
@@ -69,7 +69,7 @@ class Validate extends Make
      */
     public function getColumnsInfo($tableName)
     {
-        $sql = "SELECT COLUMN_NAME,DATA_TYPE,COLUMN_COMMENT,IS_NULLABLE 
+        $sql = "SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,COLUMN_COMMENT,IS_NULLABLE 
                 FROM INFORMATION_SCHEMA.Columns 
                 WHERE table_name='{$tableName}'";
 
@@ -109,8 +109,11 @@ EOF;
             case 'int':
                 $rules[] = 'number';
                 break;
-            case 'char' | 'varchar':
-                $rules[] = '';
+            case 'char':
+                $rules[] = 'length:'.$column['CHARACTER_MAXIMUM_LENGTH'];
+                break;
+            case 'varchar':
+                $rules[] = 'max:'.$column['CHARACTER_MAXIMUM_LENGTH'];
                 break;
             case 'datetime':
                 $rules[] = 'datetime';
@@ -139,9 +142,18 @@ EOF;
             case 'datetime':
                 $roleMessage = '必须为有效的时间格式';
                 break;
-            // TODO: and more
             default:
-                $roleMessage = '填写有误';
+                list($ruleName, $num) = explode(':', $ruleName);
+                switch ($ruleName) {
+                    case 'length':
+                        $roleMessage = "长度必须为{$num}个字符";
+                        break;
+                    case 'max':
+                        $roleMessage = "最大长度为{$num}个字符";
+                        break;
+                    default:
+                        $roleMessage = '数据有误';
+                }
         }
 
         return $roleMessage;
