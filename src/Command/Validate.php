@@ -116,7 +116,13 @@ EOF;
                 $rules[] = 'max:'.$column['CHARACTER_MAXIMUM_LENGTH'];
                 break;
             case 'datetime':
-                $rules[] = 'datetime';
+                $rules[] = 'dateFormat:Y-m-d H:i:s';
+                break;
+            case 'date':
+                $rules[] = 'dateFormat:Y-m-d';
+                break;
+            case 'time':
+                $rules[] = 'dateFormat:H:i:s';
                 break;
             // TODO: and more
             default:
@@ -139,8 +145,14 @@ EOF;
             case 'number':
                 $roleMessage = '数据格式必须为数字';
                 break;
-            case 'datetime':
-                $roleMessage = '必须为有效的时间格式';
+            case 'dateFormat:Y-m-d H:i:s':
+                $roleMessage = '必须为yyyy-mm-dd hh:ii:ss格式';
+                break;
+            case 'dateFormat:Y-m-d':
+                $roleMessage = '必须为yyyy-mm-dd格式';
+                break;
+            case 'dateFormat:H:i:s':
+                $roleMessage = '必须为hh:ii:ss格式';
                 break;
             default:
                 list($ruleName, $num) = explode(':', $ruleName);
