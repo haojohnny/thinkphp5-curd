@@ -1,0 +1,18 @@
+<?php
+// +--
+// | Date: {%createTime%}
+// | Remark:
+// |
+
+namespace {%namespace%};
+
+use think\Model;
+
+class {%className%} extends Model
+{
+    protected $auto = [];
+    protected $insert = [];
+    protected $update = [];
+
+
+}
