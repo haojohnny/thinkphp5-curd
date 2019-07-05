@@ -69,7 +69,7 @@ class Validate extends Make
      */
     public function getColumnsInfo($tableName)
     {
-        $sql = "SELECT COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,COLUMN_COMMENT,IS_NULLABLE 
+        $sql = "SELECT COLUMN_NAME,COLUMN_KEY,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,COLUMN_COMMENT,IS_NULLABLE 
                 FROM INFORMATION_SCHEMA.Columns 
                 WHERE table_name='{$tableName}'";
 
@@ -179,7 +179,7 @@ EOF;
             $roles = $this->parseColumnToRule($column);
             foreach ($roles as $ruleName) {
                 $msg = $this->parseRoleToMessage($ruleName);
-$message .= <<<EOF
+                $message .= <<<EOF
 '{$column['COLUMN_NAME']}.{$ruleName}' => '{$column['COLUMN_COMMENT']}{$msg}',
         
 EOF;
@@ -192,8 +192,23 @@ EOF;
     public function getScene($columnsInfo)
     {
         $scene = '';
+        $insert = [];
+        $update = [];
 
-        // TODO
+        foreach ($columnsInfo as $column) {
+            if ($column['COLUMN_KEY'] == 'PRI') {
+                $update[] = "'{$column['COLUMN_NAME']}'";
+            } else {
+                $insert[] = "'{$column['COLUMN_NAME']}'";
+                $update[] = "'{$column['COLUMN_NAME']}'";
+            }
+        }
+        $insert = implode($insert, ', ');
+        $update = implode($update, ', ');
+$scene .= <<<EOF
+'insert' => [{$insert}],
+        'update' => [{$update}],        
+EOF;
 
         return $scene;
     }
