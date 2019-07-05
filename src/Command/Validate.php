@@ -179,6 +179,11 @@ EOF;
             $roles = $this->parseColumnToRule($column);
             foreach ($roles as $ruleName) {
                 $msg = $this->parseRoleToMessage($ruleName);
+
+                if ($pos = strpos($ruleName, ':')) {
+                    $ruleName = substr($ruleName, 0, $pos);
+                }
+
                 $message .= <<<EOF
 '{$column['COLUMN_NAME']}.{$ruleName}' => '{$column['COLUMN_COMMENT']}{$msg}',
         
