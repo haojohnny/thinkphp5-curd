@@ -8,19 +8,45 @@ namespace {%namespace%};
 
 use think\Controller;
 use think\Request;
+use {%modelNameSpace%};
+use {%validateNameSpace%};
 
 class {%className%} extends Controller
 {
-    /**
-     * 显示资源列表
-     *
-     * @return \think\Response
-     */
+    // 显示资源列表
     public function index{%actionSuffix%}(Request $request)
     {
-        //
+        $limit = $request->param('limit', 15);
+        ${%lowerClassName%} = new model\{%className%}();
+        $tableFields = ${%lowerClassName%}->getTableFields(${%lowerClassName%}->getTable());
 
-        return view('');
+        // 筛选
+        $where = [];
+        foreach ($request->param() as $fieldName => $value) {
+            if (!empty($value) && in_array($fieldName, $tableFields)) {
+                if (is_numeric($value)) {
+                    $where[$fieldName] = $value;
+                } elseif (is_string($value)) {
+                    // 时间筛选
+                    $lowerField = strtolower($fieldName);
+                    if (strpos($lowerField, 'time') > 0 || strpos($lowerField, 'date') > 0) {
+                        if (strpos($value, '~')) {
+                            $where[$fieldName] = ['between', explode('~', $value)];
+                        } else {
+                            $where[$fieldName] = $value;
+                        }
+                    // 文本
+                    } else {
+                        // 如果使用通配符%前置将忽略索引，可以通过覆盖索引解决
+                        $where[$fieldName] = ['like', "$value%"];
+                    }
+                }
+            }
+        }
+
+        $list = ${%lowerClassName%}->where($where)->order(${%lowerClassName%}->getPk(), 'DESC')->paginate($limit);
+
+        // TODO
     }
 
     /**
@@ -28,9 +54,9 @@ class {%className%} extends Controller
      *
      * @return \think\Response
      */
-    public function create{%actionSuffix%}(Request $request)
+    public function create()
     {
-        //
+        return view();
     }
 
     /**
@@ -41,51 +67,93 @@ class {%className%} extends Controller
      */
     public function save{%actionSuffix%}(Request $request)
     {
-        //
+        $data = $request->param();
+
+        ${%lowerClassName%}Validate = new validate\{%className%}();
+        if (!${%lowerClassName%}Validate->scene('insert')->check($data)) {
+            // ${%lowerClassName%}Validate->getError();
+        }
+
+        ${%lowerClassName%} = new model\{%className%}();
+        $res = ${%lowerClassName%}->save($data);
+
+        if (false === $res) {
+        } else {
+        }
     }
 
     /**
      * 显示指定的资源
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * @param Request $request
      */
-    public function read{%actionSuffix%}($id)
+    public function read{%actionSuffix%}(Request $request)
     {
-        //
+        $id = $request->param('id', 0, 'intval');
+
+        ${%lowerClassName%}Info = model\{%className%}::get($id);
+
+        if (empty(${%lowerClassName%}Info)) {
+            // TODO
+        }
     }
 
     /**
      * 显示编辑资源表单页.
      *
-     * @param  int  $id
      * @return \think\Response
      */
-    public function edit{%actionSuffix%}($id)
+    public function edit{%actionSuffix%}(Request $request)
     {
-        //
+        $id = $request->param('id', 0, 'intval');
+
+        ${%lowerClassName%}Info = model\{%className%}::get($id);
+
+        if (empty(${%lowerClassName%}Info)) {
+            // TODO
+        }
     }
 
     /**
      * 保存更新的资源
      *
      * @param  \think\Request  $request
-     * @param  int  $id
      * @return \think\Response
      */
-    public function update{%actionSuffix%}(Request $request, $id)
+    public function update{%actionSuffix%}(Request $request)
     {
-        //
+        $data = $request->param();
+
+        ${%lowerClassName%}Validate = new validate\{%className%}();
+        if (!${%lowerClassName%}Validate->scene('update')->check($data)) {
+            // ${%lowerClassName%}Validate->getError();
+        }
+
+        ${%lowerClassName%} = new model\{%className%}();
+        $res = ${%lowerClassName%}->isUpdate(true)->save($data);
+
+        if (false === $res) {
+        } else {
+        }
     }
 
     /**
      * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * @param Request $request
      */
-    public function delete{%actionSuffix%}($id)
+    public function delete{%actionSuffix%}(Request $request)
     {
-        //
+        $id = $request->param('id', 0, 'intval');
+
+        ${%lowerClassName%}Info = model\{%className%}::get($id);
+
+        if (empty(${%lowerClassName%}Info)) {
+            // TODO
+        }
+
+        $res = ${%lowerClassName%}Info->delete();
+
+        if (false == $res) {
+        } else {
+        }
     }
 }

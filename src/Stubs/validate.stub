@@ -4,7 +4,7 @@
 // | Remark:
 // |
 
-namespace Test;
+namespace {%namespace%};
 
 use think\Validate;
 
