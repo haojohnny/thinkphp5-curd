@@ -10,7 +10,6 @@ namespace Haojohnny\Tp5Curd\Command;
 
 use think\Db;
 use Haojohnny\Tp5Curd\Make;
-use think\console\Input;
 use think\console\Input\Argument;
 
 class Validate extends Make
