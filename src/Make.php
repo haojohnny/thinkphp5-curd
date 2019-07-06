@@ -9,6 +9,8 @@
 namespace Haojohnny\Tp5Curd;
 
 use think\console\command\Make as MakeAbstract;
+use think\console\Output;
+use think\console\Input;
 
 class Make extends MakeAbstract
 {
@@ -33,5 +35,14 @@ class Make extends MakeAbstract
     protected function getNamespace($appNamespace, $module)
     {
         return parent::getNamespace($appNamespace, $module).'\\'.$this->type;
+    }
+
+    /**
+     * @param Input $input
+     * @param Output $output
+     */
+    public function executeBuild(Input $input, Output $output)
+    {
+        parent::execute($input, $output);
     }
 }

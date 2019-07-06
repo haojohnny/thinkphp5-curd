@@ -10,8 +10,8 @@ namespace Haojohnny\Tp5Curd\Command;
 
 use think\Db;
 use Haojohnny\Tp5Curd\Make;
+use think\console\Input;
 use think\console\Input\Argument;
-
 
 class Validate extends Make
 {
@@ -34,7 +34,12 @@ class Validate extends Make
         $namespace = trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
         $class = str_replace($namespace . '\\', '', $name);
 
-        $tableName = $this->input->getArgument('tableName') ?? config('database.prefix').strtolower($class);
+        $input = new Input;
+        if ($input->hasArgument('tableName')) {
+            $tableName = $input->getArgument('tableName');
+        } else {
+            $tableName = config('database.prefix').strtolower($class);
+        }
 
         $columnsInfo = $this->getColumnsInfo($tableName);
 
