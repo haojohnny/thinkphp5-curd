@@ -6,6 +6,12 @@
 如果你经常写后台管理系统的CURD，那么这个扩展包非常适合你，针对thinkphp5官方命令进行了增强，根据传入的数据表名，创建功能更完善的model，validate，controller类，减少重复造轮子的时间，让你更专注于核心业务开发。
 </p>
 
+## Requires
+
+php: >=7.0
+
+thinkphp: >=5.0
+
 ## Installing
 
 ```shell
