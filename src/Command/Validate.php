@@ -33,11 +33,7 @@ class Validate extends Make
         $namespace = trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
         $class = str_replace($namespace . '\\', '', $name);
 
-        if ($this->input->hasArgument('tableName')) {
-            $tableName = $this->input->getArgument('tableName');
-        } else {
-            $tableName = config('database.prefix').strtolower($class);
-        }
+        $tableName = $this->input->getArgument('tableName') ?? config('database.prefix').strtolower($class);;
 
         $columnsInfo = $this->getColumnsInfo($tableName);
 
