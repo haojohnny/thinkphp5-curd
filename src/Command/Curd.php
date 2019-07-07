@@ -26,7 +26,11 @@ class Curd extends Make
     public function execute(Input $input, Output $output)
     {
         (new Model())->executeBuild($input, $output);
-        (new Validate())->executeBuild($input, $output);
+
+        $validate = new Validate();
+        $validate->input = $input;
+        $validate->executeBuild($input, $output);
+
         (new Controller())->executeBuild($input, $output);
     }
 }
